@@ -1,13 +1,9 @@
-bool started;
-bool ended;
-char incomingByte;
 byte val[5] = {0, 0, 0, 0, 0};
-int serialIn = 0;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(2, OUTPUT);
 }
 
 void loop() {
@@ -16,10 +12,10 @@ void loop() {
     Serial.readBytes(val, 5);
   }
 
-  if (val[2] == byte(0)) {
-    digitalWrite(LED_BUILTIN, HIGH);
+  if (int(val[1]) == 255) {
+    digitalWrite(2, HIGH);
   } else {
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(2, LOW);
   }
 
 }
