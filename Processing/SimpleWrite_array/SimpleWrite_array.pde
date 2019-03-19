@@ -1,7 +1,7 @@
 /**
- * Simple Write Array. 
- * 
- * Check if the mouse is over a rectangle and writes an array of ints to the serial port. 
+ * Simple Write Array.
+ *
+ * Check if the mouse is over a rectangle and writes an array of ints to the serial port.
  */
 
 
@@ -11,9 +11,11 @@ Serial myPort;  // Create object from Serial class
 int mask = 0x000000FF;
 int[] val = {0 & mask, 0 & mask, 0 & mask, 0 & mask, 200 & mask}; //new int[5];
 
-void setup() 
+int maxLED = 8;
+
+void setup()
 {
-  
+
   size(510, 200);
   // I know that the first port in the serial list on my mac
   // is always my  FTDI adaptor, so I open Serial.list()[0].
@@ -23,27 +25,33 @@ void setup()
   myPort = new Serial(this, "COM4", 74880);
 }
 
-byte[] generate_msg(int[] v){
+byte[] generate_msg(int[] v) {
   byte[] result = new byte[6];
   result[0] = byte('<');
   for (int i = 0; i < 5; i ++) {
-    result[i+1] = byte(v[i]);
+    result[i+1] = byte(v[i] & mask);
   }
   return result;
 }
 
 void draw() {
-  
+
   background(255);
 
-  
+  /*
+   val[0] = index
+   val[1] =  R
+   val[2] =  G
+   val[3] =  B
+   val[3] =  A
+   */
   if (mouseX <= 255) {
     val[0] = 0 & mask;
     val[1] = mouseX & mask;
     val[2] = 0;
     val[3] = 0;
     send();
-    
+
     val[0] = 1 & mask;
     val[2] = mouseX & mask;
     val[1] = 0;
@@ -55,7 +63,7 @@ void draw() {
     val[2] = 0;
     val[3] = 0;
     send();
-    
+
     val[0] = 1 & mask;
     val[2] = (2 * 255) - mouseX & mask;
     val[1] = 0;
@@ -63,12 +71,51 @@ void draw() {
     val[3] = 0;
     send();
   }
-  
-
-
 }
 
-void send(){
+void keyPressed() {
+  if (key == '1') {
+    turnOff();
+    setMsg(0, 255, 0, 0, 255);
+  }
+
+  if (key == '2') {
+    turnOff();
+    setMsg(1, 255, 0, 0, 255);
+  }
+
+  if (key == '3') {
+    turnOff();
+    setMsg(2, 255, 0, 0, 255);
+  }
+
+  if (key == '4') {
+    turnOff();
+    setMsg(3, 255, 0, 0, 255);
+  }
+}
+
+
+
+void turnOff() {
+  for (int i = 0; i < maxLED; i++) {
+    setMsg(i, 0, 0, 0, 0);
+  }
+}
+
+void turnOn(int r, int g, int b, int a ){
+    for (int i = 0; i < maxLED; i++) {
+    setMsg(i, r, g, b, 255);
+  }
+}
+
+void setMsg(int index, int r, int g, int b, int a) {
+  int [] msgInt  = {index, r, g, b, a};
+  byte[] msg = generate_msg(msgInt);
+  myPort.write(msg);
+}
+
+void send() {
   byte[] msg = generate_msg(val);
   myPort.write(msg);
 }

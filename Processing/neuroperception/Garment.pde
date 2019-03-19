@@ -1,81 +1,3 @@
-class GarmentManager {
-  Accordion accordion;
-  ArrayList<Garment> garments;
-
-  //Serial
-  Serial port;
-  String strPort;
-  boolean serialRead = true;
-
-  //pos
-  float initPosX = 0;
-  float initPosY = 0;
-  
-  //number of garmets
-  int numGarmets = 0;
-
-  //tags
-  String [] tags ={"Mary", "Violin", "Viola", "Chelo", "Violin"};
-
-  GarmentManager(int numG, float initX, float initY) {
-    numGarmets = numG;
-    garments = new ArrayList<Garment>();
-
-    initPosX = initX;
-    initPosY = initY;
-
-    for (int i = 0; i < numG; i++) {
-      float x =  initPosX + 100*i;
-      float y = initPosY;
-      Garment gm = new Garment(8, x, y);
-      //update Position
-      gm.setName(tags[i]);
-      garments.add(gm);
-    }
-  }
-
-  //Serial
-  void setupSerial(PApplet p, String str) {
-    strPort = str;
-    try {
-      port = new Serial(p, strPort, 9600);
-    }
-    catch(Exception e) {
-      serialRead = false;
-      println("Error Serial:"+strPort);
-    }
-  }
-
-  //void create GUI
-  void createGUI() {
-    Group g1 = cp5.addGroup("garmet")
-      .setBackgroundColor(color(0, 64))
-      .setBackgroundHeight(150)
-      ;
-
-
-    for (int i = 0; i < numG; i++) {     
-      cp5.addBang("activate")
-        .setPosition(10, 20)
-        .setSize(20, 20)
-        .moveTo(g1)
-        ;
-    }
-    accordion = cp5.addAccordion("acc")
-      .setPosition(20, 20)
-      .setWidth(250)
-      .addItem(g1);
-
-    accordion.open(0);
-  }
-
-  void draw() {
-
-    for (Garment gm : garments) {
-      gm.draw();
-    }
-  }
-}
 
 /*
 Garmet 
@@ -89,6 +11,15 @@ class Garment {
   float posY;
 
   String garmetName = "";
+  
+  
+  //eanble single Garmet
+  boolean enable = true;
+  
+  //DSP information onset, pitch, note, amplitud
+  float pitch;
+  int onset;
+  float amp;
 
   Garment(int numLEDs, float posX, float posY) {
     mLEDs = new ArrayList<RGBLED>();
@@ -99,7 +30,7 @@ class Garment {
     for (int i = 0; i < numLEDs; i++) {
       RGBLED led = new RGBLED();
       float x = posX;
-      float y = posY + 50*i;
+      float y = posY + 60*i;
       //set postion
       //set color
       led.setPos(x, y);
@@ -112,23 +43,30 @@ class Garment {
   void setName(String str) {
     garmetName = str;
   }
-
-
+ 
 
   //draw garment
   void draw() {
     for (RGBLED led : mLEDs) {
       fill(255);
-      text(garmetName, posX, posY - 20);
-      led.draw();
+      text(garmetName, posX - 20, posY - 35);
+      led.draw(enable);
+      
+      //audio reactive visualization
+      led.tam = 20 + amp*25; 
     }
   }
-
+  
+  //send serial port values
   void sendValues() {
+    if (enable) {
+      //send Values to serial port.
+      
+    }
   }
 }
 
-//LED
+//Single LED that controlls the Garmet
 class RGBLED {
 
   //property color
@@ -137,10 +75,13 @@ class RGBLED {
   //disply mode
   float posX;
   float posY;
+  
+  float tam;
 
   RGBLED() {
     posX = 0;
     posY = 0;
+    tam = 20;
   }
 
   void setPos(float x, float y) {
@@ -149,9 +90,14 @@ class RGBLED {
   }
 
   //draw color
-  void draw() {
+  void draw(boolean enable) {
     noStroke();
-    fill(0, 150, 190);
-    ellipse(posX, posY, 25, 25);
+    if (enable) {
+      fill(0, 150, 190);
+    } else {
+      tam = 20;
+      fill(0, 50, 100);
+    }
+    ellipse(posX, posY, tam, tam);
   }
 }

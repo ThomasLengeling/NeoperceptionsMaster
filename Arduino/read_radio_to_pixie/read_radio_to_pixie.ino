@@ -7,6 +7,7 @@
 RF24 radio(7, 8); // CE, CSN
 const byte address[6] = "00001";
 
+bool debug = false;
 
 #define NUMPIXELS 2
 #define PIXIEPIN 6
@@ -20,9 +21,12 @@ byte val[6] = {0, 0, 0, 0, 0, 0};
 int size_data = 6;
 
 void setup() {
-  Serial.begin(74880);
+  if(debug){
+    Serial.begin(74880);
+  }
+
   pixieSerial.begin(115200);
-  
+
   radio.begin();
   radio.openReadingPipe(0, address);
   radio.setPALevel(RF24_PA_MIN);
@@ -49,7 +53,7 @@ void sort_data(byte *x, byte *r) {
       n_j = n_j - size_data;
     }
     r[n_i] = x[n_j];
-  } 
+  }
 }
 
 void loop() {
@@ -65,20 +69,22 @@ void loop() {
 
   sort_data(raw, val);
 
-  Serial.print(int(val[0]));
-  Serial.print(",");
-  Serial.print(int(val[1]));
-  Serial.print(",");
-  Serial.print(int(val[2]));
-  Serial.print(",");
-  Serial.print(int(val[3]));
-  Serial.print(",");
-  Serial.print(int(val[4]));
-  Serial.print(",");
-  Serial.print(int(val[5]));
-  Serial.print(",");
-  Serial.println();
-  
+  if(debug){
+    Serial.print(int(val[0]));
+    Serial.print(",");
+    Serial.print(int(val[1]));
+    Serial.print(",");
+    Serial.print(int(val[2]));
+    Serial.print(",");
+    Serial.print(int(val[3]));
+    Serial.print(",");
+    Serial.print(int(val[4]));
+    Serial.print(",");
+    Serial.print(int(val[5]));
+    Serial.print(",");
+    Serial.println();
+  }
+
   strip.setBrightness(int(val[5]));
   strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
   strip.show();
