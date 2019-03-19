@@ -9,7 +9,6 @@ import processing.serial.*;
 
 Serial myPort;  // Create object from Serial class
 int mask = 0x000000FF;
-int[] val = {0 & mask, 0 & mask, 0 & mask, 0 & mask, 200 & mask}; //new int[5];
 
 int maxLED = 8;
 
@@ -26,9 +25,9 @@ void setup()
 }
 
 byte[] generate_msg(int[] v) {
-  byte[] result = new byte[6];
+  byte[] result = new byte[7];
   result[0] = byte('<');
-  for (int i = 0; i < 5; i ++) {
+  for (int i = 0; i < 6; i ++) {
     result[i+1] = byte(v[i] & mask);
   }
   return result;
@@ -44,54 +43,29 @@ void draw() {
    val[2] =  G
    val[3] =  B
    val[3] =  A
+   val[4] = garmet index
    */
-  if (mouseX <= 255) {
-    val[0] = 0 & mask;
-    val[1] = mouseX & mask;
-    val[2] = 0;
-    val[3] = 0;
-    send();
-
-    val[0] = 1 & mask;
-    val[2] = mouseX & mask;
-    val[1] = 0;
-    val[3] = 0;
-    send();
-  } else {
-    val[0] = 0 & mask;
-    val[1] = (2 * 255) - mouseX & mask;
-    val[2] = 0;
-    val[3] = 0;
-    send();
-
-    val[0] = 1 & mask;
-    val[2] = (2 * 255) - mouseX & mask;
-    val[1] = 0;
-    val[2] = 0;
-    val[3] = 0;
-    send();
-  }
 }
 
 void keyPressed() {
   if (key == '1') {
     turnOff();
-    setMsg(0, 255, 0, 0, 255);
+    setMsg(0, 255, 0, 0, 255, 0);
   }
 
   if (key == '2') {
     turnOff();
-    setMsg(1, 255, 0, 0, 255);
+    setMsg(1, 255, 0, 0, 255, 0);
   }
 
   if (key == '3') {
     turnOff();
-    setMsg(2, 255, 0, 0, 255);
+    setMsg(2, 255, 0, 0, 255, 0);
   }
 
   if (key == '4') {
     turnOff();
-    setMsg(3, 255, 0, 0, 255);
+    setMsg(3, 255, 0, 0, 255, 0);
   }
 }
 
@@ -99,24 +73,19 @@ void keyPressed() {
 
 void turnOff() {
   for (int i = 0; i < maxLED; i++) {
-    setMsg(i, 0, 0, 0, 0);
+    setMsg(i, 0, 0, 0, 0, 0);
   }
 }
 
 void turnOn(int r, int g, int b, int a ){
     for (int i = 0; i < maxLED; i++) {
-    setMsg(i, r, g, b, 255);
+    setMsg(i, r, g, b, 255, 0);
   }
 }
 
-void setMsg(int index, int r, int g, int b, int a) {
-  int [] msgInt  = {index, r, g, b, a};
+void setMsg(int index, int r, int g, int b, int a, int garmentId) {
+  int [] msgInt  = {index, r, g, b, a, garmentId};
   byte[] msg = generate_msg(msgInt);
-  myPort.write(msg);
-}
-
-void send() {
-  byte[] msg = generate_msg(val);
   myPort.write(msg);
 }
 

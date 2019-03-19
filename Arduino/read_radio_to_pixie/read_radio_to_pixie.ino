@@ -16,9 +16,10 @@ SoftwareSerial pixieSerial(-1, PIXIEPIN);
 
 Adafruit_Pixie strip = Adafruit_Pixie(NUMPIXELS, &pixieSerial);
 
-byte raw[6] = {0, 0, 0, 0, 0, 0};
-byte val[6] = {0, 0, 0, 0, 0, 0};
-int size_data = 6;
+byte raw[7] = {0, 0, 0, 0, 0, 0, 0};
+byte val[6] = {0, 0, 0, 0, 0, 0, 0};
+int size_data = 7;
+int ID = 0;
 
 void setup() {
   if(debug){
@@ -68,6 +69,7 @@ void loop() {
 
 
   sort_data(raw, val);
+  
 
   if(debug){
     Serial.print(int(val[0]));
@@ -85,8 +87,10 @@ void loop() {
     Serial.println();
   }
 
-  strip.setBrightness(int(val[5]));
-  strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
-  strip.show();
-
+  if (int(val[6]) == ID) {
+    strip.setBrightness(int(val[5]));
+    strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
+    strip.show();
+ 
+  }
 }
