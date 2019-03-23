@@ -4,7 +4,7 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
-RF24 radio(7, 8); // CE, CSN
+RF24 radio(9, 10); // CE, CSN
 const byte address[6] = "00001";
 
 bool debug = false;
@@ -33,7 +33,7 @@ void setup() {
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();
 
-  pinMode(3, OUTPUT);
+  pinMode(2, OUTPUT);
 }
 
 int findIndex(byte *x, byte y) {
@@ -61,9 +61,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (radio.available()) {
     radio.read(raw, size_data);
-    digitalWrite(3, HIGH);
+    digitalWrite(2, HIGH);
   } else {
-    digitalWrite(3, LOW);
+    digitalWrite(2, LOW);
   }
 
 
