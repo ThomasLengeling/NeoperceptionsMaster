@@ -14,7 +14,7 @@ const byte address[6] = "00001";
 #define LED_PIN 2
 
 void setup() {
-  Serial.begin(74880);
+  Serial.begin(115200);
 
   radio.begin();
   radio.openWritingPipe(address);
@@ -27,15 +27,18 @@ void loop() {
   if (Serial.available()) {
     int readS = Serial.readBytes(val, 7);
 
-    while (Serial.available()) {
-      Serial.read();
-    }
+
     readSerial = true;
   }
 
   if (readSerial) {
     radio.write(val, 7);
     readSerial = false;
+
+    while (Serial.available()) {
+      Serial.read();
+    }
+
     digitalWrite(LED_PIN, HIGH);
   } else {
     digitalWrite(LED_PIN, LOW);

@@ -10,7 +10,7 @@ import processing.serial.*;
 Serial myPort;  // Create object from Serial class
 int mask = 0x000000FF;
 
-int maxLED = 8;
+int maxLED = 12;
 
 void setup()
 {
@@ -20,11 +20,11 @@ void setup()
   // is always my  FTDI adaptor, so I open Serial.list()[0].
   // On Windows machines, this generally opens COM1.
   // Open whatever port is the one you're using.
-  String portName = Serial.list()[0];
+  String portName = Serial.list()[Serial.list().length -1  ];
   printArray( Serial.list());
   println(portName);
-  
-  myPort = new Serial(this, portName, 74880);
+
+  myPort = new Serial(this, portName, 115200);
 }
 
 byte[] generate_msg(int[] v) {
@@ -48,8 +48,8 @@ void draw() {
    val[3] =  A
    val[4] = garmet index
    */
-   
-   setMsg(0, (int)map(mouseX, 0, width, 0, 255), (int)map(mouseY, 0, width, 0, 255), 0, 255, 0);
+
+  setMsg(0, (int)map(mouseX, 0, width, 0, 255), (int)map(mouseY, 0, height, 0, 255), 0, 255, 0);
 }
 
 void keyPressed() {
@@ -65,12 +65,31 @@ void keyPressed() {
 
   if (key == '3') {
     turnOff();
-    setMsg(2, 255, 0, 0, 255, 0);
   }
 
   if (key == '4') {
-    turnOff();
-    setMsg(3, 255, 0, 0, 255, 0);
+    //turnOff();
+    turnOn(255, 0, 0, 255);
+  }
+
+  if (key == '5') {
+    //turnOff();
+    turnOn(0, 255, 0, 255);
+  }
+
+  if (key == '6') {
+    //turnOff();
+    turnOn(0, 0, 255, 255);
+  }
+
+  if (key == '7') {
+    //turnOff();
+    turnOn(0, 255, 255, 255);
+  }
+  
+    if (key == '7') {
+    //turnOff();
+    turnOn(0, 255, 255, 255);
   }
 }
 
@@ -82,9 +101,9 @@ void turnOff() {
   }
 }
 
-void turnOn(int r, int g, int b, int a ){
-    for (int i = 0; i < maxLED; i++) {
-    setMsg(i, r, g, b, 255, 0);
+void turnOn(int r, int g, int b, int a ) {
+  for (int i = 0; i < maxLED; i++) {
+    setMsg(i, r, g, b, a, 0);
   }
 }
 
@@ -96,5 +115,4 @@ void setMsg(int index, int r, int g, int b, int a, int garmentId) {
 
 boolean mouseOverRect() { // Test if mouse is over square
   return ((mouseX >= 50) && (mouseX <= 150) && (mouseY >= 50) && (mouseY <= 150));
-  
 }

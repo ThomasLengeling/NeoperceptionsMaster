@@ -18,14 +18,14 @@ SoftwareSerial pixieSerial(-1, PIXIEPIN);
 Adafruit_Pixie strip = Adafruit_Pixie(NUMPIXELS, &pixieSerial);
 
 byte raw[7] = {0, 0, 0, 0, 0, 0, 0};
-byte val[6] = {0, 0, 0, 0, 0, 0, 0};
+byte val[7] = {0, 0, 0, 0, 0, 0, 0};
 
 int size_data = 7;
 int ID = 0;
 
 void setup() {
-  if(debug){
-    Serial.begin(74880);
+  if (debug) {
+    Serial.begin(115200);
   }
 
   pixieSerial.begin(115200);
@@ -39,8 +39,8 @@ void setup() {
 }
 
 int findIndex(byte *x, byte y) {
-  for( int i = 0; i < size_data; i ++ ) {
-    if (x[i] == y){
+  for ( int i = 0; i < size_data; i ++ ) {
+    if (x[i] == y) {
       return i;
     }
   }
@@ -49,10 +49,10 @@ int findIndex(byte *x, byte y) {
 
 void sort_data(byte *x, byte *r) {
   int index = findIndex(x, byte('<'));
-  for( int i = 0; i < size_data; i ++ ) {
+  for ( int i = 0; i < size_data; i ++ ) {
     int n_i = i;
     int n_j = i + index;
-    if (n_j > (size_data -1)){
+    if (n_j > (size_data - 1)) {
       n_j = n_j - size_data;
     }
     r[n_i] = x[n_j];
@@ -71,9 +71,9 @@ void loop() {
 
 
   sort_data(raw, val);
-  
 
-  if(debug){
+
+  if (debug) {
     Serial.print(int(val[0]));
     Serial.print(",");
     Serial.print(int(val[1]));
@@ -86,13 +86,16 @@ void loop() {
     Serial.print(",");
     Serial.print(int(val[5]));
     Serial.print(",");
+    Serial.print(int(val[6]));
     Serial.println();
   }
 
   if (int(val[6]) == ID) {
     strip.setBrightness(int(val[5]));
-    strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
+    for (int i = 0; i < NUMPIXELS; i++) {
+      strip.setPixelColor(i, int(val[2]), int(val[3]), int(val[4]));
+    }
     strip.show();
- 
   }
+
 }
