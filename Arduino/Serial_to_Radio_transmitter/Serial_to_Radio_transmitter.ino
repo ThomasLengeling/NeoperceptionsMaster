@@ -10,6 +10,9 @@ boolean readSerial = false;
 
 RF24 radio(9, 10); // CE, CSN
 const byte address[6] = "00001";
+
+#define LED_PIN 2
+
 void setup() {
   Serial.begin(74880);
 
@@ -18,7 +21,7 @@ void setup() {
   radio.setPALevel(RF24_PA_MIN);
   radio.stopListening();
 
-  pinMode(2, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
 }
 void loop() {
   if (Serial.available()) {
@@ -33,7 +36,9 @@ void loop() {
   if (readSerial) {
     radio.write(val, 7);
     readSerial = false;
+    digitalWrite(LED_PIN, HIGH);
+  } else {
+    digitalWrite(LED_PIN, LOW);
   }
 
- 
 }

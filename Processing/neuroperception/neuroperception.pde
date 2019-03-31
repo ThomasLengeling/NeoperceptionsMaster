@@ -1,3 +1,5 @@
+
+
 import controlP5.*;
 import processing.serial.*;
 
@@ -24,18 +26,20 @@ void setup() {
   //manager
   float gStartX = 350; 
   float gStartY = 80;
-  String portNameG= "";
+  String portNameG= "COM25";
   manager = new GarmentManager(6, gStartX, gStartY);
   manager.createGUI();
-  manager.setupSerial(this, portNameG);
+  setupGarmentSerial(portNameG);
 
   //create Hylighter
   float hStartX = 350; 
   float hStartY = 650;
-  String portNameH= "";
+  String portNameH= "COM5";
   hylighters = new Hylighter(5, hStartX, hStartY);
   hylighters.createGUI();
   hylighters.setupSerial(this, portNameH);
+
+  setupMidiMap();
 }
 
 void draw() {
@@ -46,6 +50,7 @@ void draw() {
   hylighters.draw();
 
   controlActivations();
+  
 }
 
 void controlActivations() {
@@ -62,5 +67,12 @@ void controlActivations() {
     int activate = int(cp5.getController("activate_h"+i).getValue());
     led.enable = boolean(activate);
     i++;
+  }
+}
+
+void keyPressed() {
+  if (key == 'a') {
+    color p = color(0, 255, 0);
+    sendMsg(gPort, 0, int(red(p)), int(green(p)), int(blue(p)), 255, 0);
   }
 }

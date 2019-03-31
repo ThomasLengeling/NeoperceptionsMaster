@@ -6,12 +6,13 @@ class Garment {
 
   ArrayList<RGBLED> mLEDs;
 
+  int maxLEDs;
+
   //initial position
   float posX;
   float posY;
 
   String garmetName = "";
-
 
   //eanble single Garmet
   boolean enable = true;
@@ -23,31 +24,8 @@ class Garment {
 
   color pitchColor = color(0, 150, 200);
 
+  int id;
 
-  void mapPitch() {
-    int midiPitch = floor(pitch);
-    println(midiPitch);
-
-    //A Flat
-    if (midiPitch == 32 || midiPitch == 44 || midiPitch == 56 || midiPitch == 68 || midiPitch == 92 || midiPitch == 104 || midiPitch == 116) {
-      pitchColor = #F74B27;
-    }
-    //E Flat
-    if (midiPitch == 27 || midiPitch == 39 || midiPitch == 51 || midiPitch == 63 || midiPitch == 75 || midiPitch == 87 || midiPitch == 99) {
-      pitchColor = #0132FC;
-      println("got it");
-    }
-    
-    //f Flat
-    if (midiPitch == 30 || midiPitch == 42 || midiPitch == 54 || midiPitch == 66 || midiPitch == 90 || midiPitch == 102 || midiPitch == 114 ) {
-      pitchColor = #E0D7FF;
-      println("got it");
-    }
-
-    if (midiPitch == 0 ) {
-      pitchColor = color(0, 150, 200);
-    }
-  }
 
   Garment(int numLEDs, float posX, float posY) {
     mLEDs = new ArrayList<RGBLED>();
@@ -62,14 +40,23 @@ class Garment {
       //set postion
       //set color
       led.setPos(x, y);
+      led.id = i;
 
       mLEDs.add(led);
     }
   }
 
+  void setId(int gId) {
+    id = gId;
+  }
+
   //set Garmet Name
   void setName(String str) {
     garmetName = str;
+  }
+
+  int getMaxLEDs() {
+    return mLEDs.size();
   }
 
 
@@ -83,7 +70,14 @@ class Garment {
       //audio reactive visualization
       //led.tam = 20 + amp*25;
       led.colorLED = pitchColor;
-      led.tam = 20 + amp*25;
+      led.tam = 20 + map(amp, -60, 10, 0, 1)*25;
+
+
+      //update timer to turn of the LED
+      if (led.updateTimer()) {
+        led.resetTimer();
+        sendMsg(gPort, id, 0, 0, 0, 0, led.id);
+      }
     }
   }
 
@@ -91,6 +85,12 @@ class Garment {
   void sendValues() {
     if (enable) {
       //send Values to serial port.
+    }
+  }
+
+  void incTime() {
+    for (RGBLED led : mLEDs) {
+      led.incTime();
     }
   }
 }
@@ -107,12 +107,20 @@ class RGBLED {
 
   float tam;
 
+  //local timer per LED
+  int timerLED;
+  int timerMax = int(60 * 0.6); //frame per second
+  boolean enableLED = false;
+
+  //unique id
+  int id;
 
   RGBLED() {
     posX = 0;
     posY = 0;
     tam = 20;
     colorLED = color(0, 150, 200);
+    id =0;
   }
 
   void setPos(float x, float y) {
@@ -124,11 +132,36 @@ class RGBLED {
   void draw(boolean enable) {
     noStroke();
     if (enable) {
-      fill(colorLED);
+      if (enableLED) {
+        fill(colorLED);
+      }else{
+        fill(colorLED, 150);
+      }
     } else {
       tam = 20;
       fill(0, 50, 100);
     }
     ellipse(posX, posY, tam, tam);
+  }
+
+  //increment time
+  void incTime() {
+    timerLED++;
+    enableLED = true;
+  }
+
+  void resetTimer() {
+    enableLED = false;
+    timerLED = 0;
+    println("reset LEDs "+id);
+  }
+
+  boolean updateTimer() {
+    if (abs(millis() - timerLED) >= timerMax) {
+      if (enableLED) {
+        return true;
+      }
+    }
+    return false;
   }
 }

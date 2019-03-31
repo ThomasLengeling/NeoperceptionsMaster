@@ -7,10 +7,11 @@
 RF24 radio(9, 10); // CE, CSN
 const byte address[6] = "00001";
 
-bool debug = false;
+bool debug = true;
 
-#define NUMPIXELS 2
+#define NUMPIXELS 12
 #define PIXIEPIN 6
+#define LEDPIN 2
 
 SoftwareSerial pixieSerial(-1, PIXIEPIN);
 
@@ -18,6 +19,7 @@ Adafruit_Pixie strip = Adafruit_Pixie(NUMPIXELS, &pixieSerial);
 
 byte raw[7] = {0, 0, 0, 0, 0, 0, 0};
 byte val[6] = {0, 0, 0, 0, 0, 0, 0};
+
 int size_data = 7;
 int ID = 0;
 
@@ -33,7 +35,7 @@ void setup() {
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();
 
-  pinMode(2, OUTPUT);
+  pinMode(LEDPIN, OUTPUT);
 }
 
 int findIndex(byte *x, byte y) {
@@ -61,9 +63,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (radio.available()) {
     radio.read(raw, size_data);
-    digitalWrite(2, HIGH);
+    digitalWrite(LEDPIN, HIGH);
   } else {
-    digitalWrite(2, LOW);
+    digitalWrite(LEDPIN, LOW);
   }
 
 

@@ -21,7 +21,10 @@ void setup()
   // On Windows machines, this generally opens COM1.
   // Open whatever port is the one you're using.
   String portName = Serial.list()[0];
-  myPort = new Serial(this, "COM4", 74880);
+  printArray( Serial.list());
+  println(portName);
+  
+  myPort = new Serial(this, portName, 74880);
 }
 
 byte[] generate_msg(int[] v) {
@@ -45,6 +48,8 @@ void draw() {
    val[3] =  A
    val[4] = garmet index
    */
+   
+   setMsg(0, (int)map(mouseX, 0, width, 0, 255), (int)map(mouseY, 0, width, 0, 255), 0, 255, 0);
 }
 
 void keyPressed() {
@@ -91,4 +96,5 @@ void setMsg(int index, int r, int g, int b, int a, int garmentId) {
 
 boolean mouseOverRect() { // Test if mouse is over square
   return ((mouseX >= 50) && (mouseX <= 150) && (mouseY >= 50) && (mouseY <= 150));
+  
 }

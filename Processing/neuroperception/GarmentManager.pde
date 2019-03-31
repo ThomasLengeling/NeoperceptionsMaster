@@ -1,15 +1,10 @@
-  //tags
-  String [] tags ={"Mary_voice", "Violin_0", "Viola", "Chelo", "Violin_1", "Piano"};
-  
+//tags
+String [] tags ={"Mary_voice", "Violin_0", "Viola", "Chelo", "Violin_1", "Piano"};
+
 
 class GarmentManager {
   Accordion accordion;
   ArrayList<Garment> garments;
-
-  //Serial
-  Serial port;
-  String strPort;
-  boolean serialRead = true;
 
   //pos
   float initPosX = 0;
@@ -33,21 +28,11 @@ class GarmentManager {
       Garment gm = new Garment(8, x, y);
       //update Position
       gm.setName(tags[i]);
+      gm.setId(i);
       garments.add(gm);
     }
   }
 
-  //Serial
-  void setupSerial(PApplet p, String str) {
-    strPort = str;
-    try {
-      port = new Serial(p, strPort, 9600);
-    }
-    catch(Exception e) {
-      serialRead = false;
-      println("Error Serial:"+strPort);
-    }
-  }
 
   //void create GUI
   void createGUI() {
@@ -74,9 +59,12 @@ class GarmentManager {
   }
 
   void draw() {
-
     for (Garment gm : garments) {
       gm.draw();
     }
   }
+
+
+
+  
 }
