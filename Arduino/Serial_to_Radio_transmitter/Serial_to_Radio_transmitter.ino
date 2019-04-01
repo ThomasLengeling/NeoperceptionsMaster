@@ -5,7 +5,9 @@
 #include <RF24.h>
 #include <RF24_config.h>
 
-byte val[7] = {0, 0, 0, 0, 0, 0, 0};
+const int val_size = 38;
+byte val [val_size] ;
+
 boolean readSerial = false;
 
 RF24 radio(9, 10); // CE, CSN
@@ -22,17 +24,20 @@ void setup() {
   radio.stopListening();
 
   pinMode(LED_PIN, OUTPUT);
+
+  //fill with zeros
+  for(int i = 0; i < val_size; i++){
+    val[i] = 0;
+  }
 }
 void loop() {
   if (Serial.available()) {
-    int readS = Serial.readBytes(val, 7);
-
-
+    int readS = Serial.readBytes(val, val_size);
     readSerial = true;
   }
 
   if (readSerial) {
-    radio.write(val, 7);
+    radio.write(val, val_size);
     readSerial = false;
 
     while (Serial.available()) {

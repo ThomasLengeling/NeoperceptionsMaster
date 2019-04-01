@@ -2,6 +2,8 @@
 Serial gPort;
 String gStrPort = "";
 boolean gSerialRead = true;
+int mask = 0x000000FF;
+int[] LEDArray = new int[37]; // id, rgb * 12
 
 void setupGarmentSerial(String str) {
   gStrPort = str;
@@ -41,6 +43,26 @@ void sendMsg(Serial gPort, int index, int r, int g, int b, int a, int garmentId)
   }
 }
 
+void setMsg(int index, int r, int g, int b, int a, int garmentId) {  
+  LEDArray[0] = garmentId;
+  LEDArray[index * 3 + 1] = r;
+  LEDArray[index * 3 + 2] = g;
+  LEDArray[index * 3 + 3] = b;
+}
+
+
+void turnOff(int maxLEDs) {
+  for (int i = 0; i < maxLEDs; i++) {
+    setMsg(i, 0, 0, 0, 0, 0);
+  }
+}
+
+void turnOn(int r, int g, int b, int a ) {
+  for (int i = 0; i < maxLEDs; i++) {
+    setMsg(i, r, g, b, a, 0);
+  }
+}
+
 void sendMsgAll(Serial gPort, int index, int r, int g, int b, int a, int maxLEDs) {
   for (int i = 0; i < maxLEDs; i++) {
     sendMsg(gPort, index, r, g, b, a, i);
@@ -48,10 +70,9 @@ void sendMsgAll(Serial gPort, int index, int r, int g, int b, int a, int maxLEDs
 }
 
 byte[] generateMsg(int[] v) {
-  int mask = 0x000000FF;
-  byte[] result = new byte[7];
+  byte[] result = new byte[38];
   result[0] = byte('<');
-  for (int i = 0; i < 6; i ++) {
+  for (int i = 0; i < 37; i ++) {
     result[i+1] = byte(v[i] & mask);
   }
   return result;
