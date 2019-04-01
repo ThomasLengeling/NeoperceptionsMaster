@@ -19,7 +19,7 @@ Adafruit_Pixie strip = Adafruit_Pixie(NUMPIXELS, &pixieSerial);
 
 
 
-const int size_data = 38;
+const int size_data = 20;
 byte raw[size_data];// = {0, 0, 0, 0, 0, 0, 0};
 byte val[size_data];// = {0, 0, 0, 0, 0, 0, 0};
 int ID = 0;
@@ -40,8 +40,8 @@ void setup() {
   pinMode(LEDPIN, OUTPUT);
 
   for(int i = 0; i < size_data; i++){
-    val[i] = 5;
-    raw[i] = 5;
+    val[i] = 0;
+    raw[i] = 0;
   }
 }
 
@@ -51,11 +51,14 @@ int findIndex(byte *x, byte y) {
       return i;
     }
   }
-  return 0;
+  return -1;
 }
 
 void sort_data(byte *x, byte *r) {
   int index = findIndex(x, byte('<'));
+  if (index == -1) {
+    index = findIndex(x, byte('>')); 
+  }
   for ( int i = 0; i < size_data; i ++ ) {
     int n_i = i;
     int n_j = i + index;
@@ -91,23 +94,37 @@ void loop() {
 
   if (int(val[1]) == ID) {
     //strip.setBrightness(int(val[5]));
-
-    for (int i = 0; i < 12; i++) {
-    if (debug) {
-    Serial.print(i);
-    Serial.print(",");
-    Serial.print(int(val[3*i  + 2]));
-    Serial.print(",");
-    Serial.print(int(val[3*i  + 3]));
-    Serial.print(",");
-    Serial.print(int(val[3*i  + 4]));
-    Serial.println();
+    if (val[0] == byte('<')) {
+      for (int i = 0; i < 6; i++) {
+        if (debug) {
+          Serial.print(i);
+          Serial.print(",");
+          Serial.print(int(val[3*i  + 2]));
+          Serial.print(",");
+          Serial.print(int(val[3*i  + 3]));
+          Serial.print(",");
+          Serial.print(int(val[3*i  + 4]));
+          Serial.println();
+        }
+        strip.setPixelColor(i, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
+      }
     }
-    strip.setPixelColor(i, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
-  
-    }
-    //strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
 
+    if (val[0] == byte('>')) {
+      for (int i = 0; i < 6; i++) {
+        if (debug) {
+          Serial.print(i + 6);
+          Serial.print(",");
+          Serial.print(int(val[3*i  + 2]));
+          Serial.print(",");
+          Serial.print(int(val[3*i  + 3]));
+          Serial.print(",");
+          Serial.print(int(val[3*i  + 4]));
+          Serial.println();
+        }
+        strip.setPixelColor(i + 6, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
+      }
+    }
   }
 
     strip.show();
