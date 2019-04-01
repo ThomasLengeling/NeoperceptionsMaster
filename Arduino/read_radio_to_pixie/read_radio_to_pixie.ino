@@ -92,9 +92,9 @@ void loop() {
 
   if (int(val[6]) == ID) {
     strip.setBrightness(int(val[5]));
-    for (int i = 0; i < NUMPIXELS; i++) {
-      strip.setPixelColor(i, int(val[2]), int(val[3]), int(val[4]));
-    }
+
+    strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
+
     strip.show();
   }
 
