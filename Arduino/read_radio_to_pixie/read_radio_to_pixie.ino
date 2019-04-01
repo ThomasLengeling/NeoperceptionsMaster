@@ -17,10 +17,11 @@ SoftwareSerial pixieSerial(-1, PIXIEPIN);
 
 Adafruit_Pixie strip = Adafruit_Pixie(NUMPIXELS, &pixieSerial);
 
-byte raw[7] = {0, 0, 0, 0, 0, 0, 0};
-byte val[7] = {0, 0, 0, 0, 0, 0, 0};
 
-int size_data = 7;
+
+const int size_data = 38;
+byte raw[size_data];// = {0, 0, 0, 0, 0, 0, 0};
+byte val[size_data];// = {0, 0, 0, 0, 0, 0, 0};
 int ID = 0;
 
 void setup() {
@@ -34,8 +35,14 @@ void setup() {
   radio.openReadingPipe(0, address);
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();
+  strip.setBrightness(200);
 
   pinMode(LEDPIN, OUTPUT);
+
+  for(int i = 0; i < size_data; i++){
+    val[i] = 5;
+    raw[i] = 5;
+  }
 }
 
 int findIndex(byte *x, byte y) {
@@ -74,28 +81,34 @@ void loop() {
 
 
   if (debug) {
-    Serial.print(int(val[0]));
+    for(int i = 0; i < size_data; i++) {
+      
+    Serial.print(int(val[i]));
     Serial.print(",");
-    Serial.print(int(val[1]));
-    Serial.print(",");
-    Serial.print(int(val[2]));
-    Serial.print(",");
-    Serial.print(int(val[3]));
-    Serial.print(",");
-    Serial.print(int(val[4]));
-    Serial.print(",");
-    Serial.print(int(val[5]));
-    Serial.print(",");
-    Serial.print(int(val[6]));
+    }
     Serial.println();
   }
 
-  if (int(val[6]) == ID) {
-    strip.setBrightness(int(val[5]));
+  if (int(val[1]) == ID) {
+    //strip.setBrightness(int(val[5]));
 
-    strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
+    for (int i = 0; i < 12; i++) {
+    if (debug) {
+    Serial.print(i);
+    Serial.print(",");
+    Serial.print(int(val[3*i  + 2]));
+    Serial.print(",");
+    Serial.print(int(val[3*i  + 3]));
+    Serial.print(",");
+    Serial.print(int(val[3*i  + 4]));
+    Serial.println();
+    }
+    strip.setPixelColor(i, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
+  
+    }
+    //strip.setPixelColor(int(val[1]), int(val[2]), int(val[3]), int(val[4]));
 
-    strip.show();
   }
 
+    strip.show();
 }
