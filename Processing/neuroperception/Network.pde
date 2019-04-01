@@ -69,7 +69,7 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
       if (pitch != 0) {
         int maxLEDs = manager.garments.get(garmentIndex).getMaxLEDs() - 1;
         println(note);
-        sendMsgAll(gPort, i, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), 255, maxLEDs);
+        sendMsgAll(gPort, maxLEDs, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), garmentIndex);
       }
 
       if (pitch == 0) {

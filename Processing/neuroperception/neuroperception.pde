@@ -11,6 +11,9 @@ GarmentManager manager;
 //hyligher
 Hylighter      hylighters;
 
+/*
+
+*/
 void setup() {
   size(1280, 800);
   smooth(16);
@@ -42,15 +45,16 @@ void setup() {
   setupMidiMap();
 }
 
+/*
+
+*/
 void draw() {
   background(50);
-
 
   manager.draw();
   hylighters.draw();
 
   controlActivations();
-  
 }
 
 void controlActivations() {
@@ -71,8 +75,11 @@ void controlActivations() {
 }
 
 void keyPressed() {
-  if (key == 'a') {
-    color p = color(0, 255, 0);
-    sendMsg(gPort, 0, int(red(p)), int(green(p)), int(blue(p)), 255, 0);
+  if (key == '3') {
+    turnOff(gPort, 12, 0);
+  }
+
+  if (key == '4') {
+    turnOn(gPort, 0, 255, 0, 12, 0);
   }
 }

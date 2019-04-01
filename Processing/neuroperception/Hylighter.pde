@@ -1,6 +1,7 @@
-/*
-Hyligher
- */
+/*  
+  Hyligher
+*/
+ 
 class Hylighter {
   //gui
   Accordion accordion;

@@ -1,5 +1,5 @@
 //tags
-String [] tags ={"Mary_voice", "Violin_0", "Viola", "Chelo", "Violin_1", "Piano"};
+String [] tags = {"Mary_voice", "Violin_0", "Viola", "Chelo", "Violin_1", "Piano"};
 
 
 class GarmentManager {
@@ -12,8 +12,6 @@ class GarmentManager {
 
   //number of garmets
   int numGarmets = 0;
-
-
 
   GarmentManager(int numG, float initX, float initY) {
     numGarmets = numG;

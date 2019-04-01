@@ -76,7 +76,7 @@ class Garment {
       //update timer to turn of the LED
       if (led.updateTimer()) {
         led.resetTimer();
-        sendMsg(gPort, id, 0, 0, 0, 0, led.id);
+        sendSerialMsg(gPort, led.id, 0, 0, 0, id);
       }
     }
   }
