@@ -109,7 +109,7 @@ class RGBLED {
 
   //local timer per LED
   int timerLED;
-  int timerMax = int(60 * 0.6); //frame per second
+  int timerMax = int(60 * 1.5); //frame per second
   boolean enableLED = false;
 
   //unique id
@@ -153,7 +153,7 @@ class RGBLED {
   void resetTimer() {
     enableLED = false;
     timerLED = 0;
-    println("reset LEDs "+id);
+   // println("reset LEDs "+id);
   }
 
   boolean updateTimer() {

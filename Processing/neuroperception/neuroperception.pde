@@ -26,7 +26,7 @@ void setup() {
   //manager
   float gStartX = 350; 
   float gStartY = 80;
-  String portNameG= "COM25";
+  String portNameG= "/dev/ttyUSB0";//"COM25";
   manager = new GarmentManager(6, gStartX, gStartY);
   manager.createGUI();
   setupGarmentSerial(portNameG);
@@ -34,7 +34,7 @@ void setup() {
   //create Hylighter
   float hStartX = 350; 
   float hStartY = 650;
-  String portNameH= "COM5";
+  String portNameH= "/dev/ttyUSB4";
   hylighters = new Hylighter(5, hStartX, hStartY);
   hylighters.createGUI();
   hylighters.setupSerial(this, portNameH);

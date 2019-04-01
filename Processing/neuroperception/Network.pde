@@ -43,7 +43,7 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
     //amp (DB float) (onset int), pitch (float), note string
 
     for (int i = 0; i < 5; i++) {
-      int garmentIndex = i*4;
+      int garmentIndex = i;
       int ampIndex     = i*4 + 0;
       int onsetIndex   = i*4 + 1;
       int pitchIndex   = i*4 + 2;
@@ -68,7 +68,8 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
 
       if (pitch != 0) {
         int maxLEDs = manager.garments.get(garmentIndex).getMaxLEDs() - 1;
-        sendMsgAll(gPort, i, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), 100, maxLEDs);
+        println(note);
+        sendMsgAll(gPort, i, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), 255, maxLEDs);
       }
 
       if (pitch == 0) {
@@ -79,5 +80,5 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
   }
 
   // print the result
-  //println( "receive: \""+data+"\" from "+ip+" on port "+port+" "+message);
+  println( "receive: \""+data+"\" from "+ip+" on port "+port+" "+message);
 }

@@ -31,9 +31,14 @@ void turnOff() {
 
 //send color to the leds
 void sendMsg(Serial gPort, int index, int r, int g, int b, int a, int garmentId) {
-  int [] msgInt  = {index, r, g, b, a, garmentId};
-  byte[] msg = generateMsg(msgInt);
-  gPort.write(msg);
+  try {
+    int [] msgInt  = {index, r, g, b, a, garmentId};
+    byte[] msg = generateMsg(msgInt);
+    gPort.write(msg);
+  }
+  catch(Exception e) {
+    println("sending port error");
+  }
 }
 
 void sendMsgAll(Serial gPort, int index, int r, int g, int b, int a, int maxLEDs) {
