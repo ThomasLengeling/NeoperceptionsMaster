@@ -11,6 +11,7 @@ Serial myPort;  // Create object from Serial class
 int mask = 0x000000FF;
 
 int maxLED = 12;
+int[] LEDArray = new int[37]; // id, rgb * 12
 
 void setup()
 {
@@ -26,11 +27,21 @@ void setup()
 
   myPort = new Serial(this, portName, 115200);
 }
+/*
+byte[] generate_msg(int[] v) {
+ byte[] result = new byte[7];
+ result[0] = byte('<');
+ for (int i = 0; i < 6; i ++) {
+ result[i+1] = byte(v[i] & mask);
+ }
+ return result;
+ }
+ */
 
 byte[] generate_msg(int[] v) {
-  byte[] result = new byte[7];
+  byte[] result = new byte[38];
   result[0] = byte('<');
-  for (int i = 0; i < 6; i ++) {
+  for (int i = 0; i < 37; i ++) {
     result[i+1] = byte(v[i] & mask);
   }
   return result;
@@ -49,18 +60,18 @@ void draw() {
    val[4] = garmet index
    */
 
-  setMsg(0, (int)map(mouseX, 0, width, 0, 255), (int)map(mouseY, 0, height, 0, 255), 0, 255, 0);
+  //setMsg(0, (int)map(mouseX, 0, width, 0, 255), (int)map(mouseY, 0, height, 0, 255), 0, 255, 0);
 }
 
 void keyPressed() {
   if (key == '1') {
     turnOff();
-    setMsg(0, 255, 0, 0, 255, 0);
+    setMsg(0, 255, 0, 0, 0);
   }
 
   if (key == '2') {
     turnOff();
-    setMsg(1, 255, 0, 0, 255, 0);
+    setMsg(1, 255, 0, 0, 0);
   }
 
   if (key == '3') {
@@ -86,30 +97,45 @@ void keyPressed() {
     //turnOff();
     turnOn(0, 255, 255, 255);
   }
-  
-    if (key == '7') {
-    //turnOff();
-    turnOn(0, 255, 255, 255);
+
+  if (key == '8') {
+    setMsg(5, 0, 0, 255, 0);
   }
+  sendMsg();
 }
 
 
 
 void turnOff() {
   for (int i = 0; i < maxLED; i++) {
-    setMsg(i, 0, 0, 0, 0, 0);
+    setMsg(i, 0, 0, 0, 0);
   }
 }
 
 void turnOn(int r, int g, int b, int a ) {
   for (int i = 0; i < maxLED; i++) {
-    setMsg(i, r, g, b, a, 0);
+    setMsg(i, r, g, b, 0);
   }
 }
 
+/*
 void setMsg(int index, int r, int g, int b, int a, int garmentId) {
-  int [] msgInt  = {index, r, g, b, a, garmentId};
-  byte[] msg = generate_msg(msgInt);
+ int [] msgInt  = {index, r, g, b, a, garmentId};
+ byte[] msg = generate_msg(msgInt);
+ myPort.write(msg);
+ }
+ */
+
+void setMsg(int index, int r, int g, int b, int garmentId) {  
+  LEDArray[0] = garmentId;
+  LEDArray[index * 3 + 1] = r;
+  LEDArray[index * 3 + 2] = g;
+  LEDArray[index * 3 + 3] = b;
+}
+
+void sendMsg() {
+  byte[] msg = generate_msg(LEDArray); 
+  println(msg);
   myPort.write(msg);
 }
 
