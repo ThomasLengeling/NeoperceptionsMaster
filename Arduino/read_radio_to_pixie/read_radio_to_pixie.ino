@@ -23,6 +23,7 @@ const int size_data = 20;
 byte raw[size_data];// = {0, 0, 0, 0, 0, 0, 0};
 byte val[size_data];// = {0, 0, 0, 0, 0, 0, 0};
 int ID = 0;
+float ratio = 0.5;
 
 void setup() {
   if (debug) {
@@ -39,7 +40,7 @@ void setup() {
 
   pinMode(LEDPIN, OUTPUT);
 
-  for(int i = 0; i < size_data; i++){
+  for (int i = 0; i < size_data; i++) {
     val[i] = 0;
     raw[i] = 0;
   }
@@ -57,7 +58,7 @@ int findIndex(byte *x, byte y) {
 void sort_data(byte *x, byte *r) {
   int index = findIndex(x, byte('<'));
   if (index == -1) {
-    index = findIndex(x, byte('>')); 
+    index = findIndex(x, byte('>'));
   }
   for ( int i = 0; i < size_data; i ++ ) {
     int n_i = i;
@@ -67,6 +68,18 @@ void sort_data(byte *x, byte *r) {
     }
     r[n_i] = x[n_j];
   }
+}
+
+uint8_t getRedFromColor(uint32_t c) {
+  return c >> 16;
+}
+
+uint8_t getGreenFromColor(uint32_t c) {
+  return c >> 8;
+}
+
+uint8_t getBlueFromColor(uint32_t c) {
+  return c;
 }
 
 void loop() {
@@ -84,10 +97,10 @@ void loop() {
 
 
   if (debug) {
-    for(int i = 0; i < size_data; i++) {
-      
-    Serial.print(int(val[i]));
-    Serial.print(",");
+    for (int i = 0; i < size_data; i++) {
+
+      Serial.print(int(val[i]));
+      Serial.print(",");
     }
     Serial.println();
   }
@@ -99,14 +112,22 @@ void loop() {
         if (debug) {
           Serial.print(i);
           Serial.print(",");
-          Serial.print(int(val[3*i  + 2]));
+          Serial.print(int(val[3 * i  + 2]));
           Serial.print(",");
-          Serial.print(int(val[3*i  + 3]));
+          Serial.print(int(val[3 * i  + 3]));
           Serial.print(",");
-          Serial.print(int(val[3*i  + 4]));
+          Serial.print(int(val[3 * i  + 4]));
           Serial.println();
         }
-        strip.setPixelColor(i, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
+        uint32_t currentC = strip.getPixelColor(i);
+        int red = getRedFromColor(currentC);
+        int green = getRedFromColor(currentC);
+        int blue = getRedFromColor(currentC);
+
+        strip.setPixelColor(i, int((1 - ratio) * float(val[3 * i + 2]) + ratio * float(red)),
+                            int((1 - ratio) * float(val[3 * i + 3]) + ratio * float(green)),
+                            int((1 - ratio) * float(val[3 * i + 4]) + ratio * float(blue)));
+
       }
     }
 
@@ -115,17 +136,27 @@ void loop() {
         if (debug) {
           Serial.print(i + 6);
           Serial.print(",");
-          Serial.print(int(val[3*i  + 2]));
+          Serial.print(int(val[3 * i  + 2]));
           Serial.print(",");
-          Serial.print(int(val[3*i  + 3]));
+          Serial.print(int(val[3 * i  + 3]));
           Serial.print(",");
-          Serial.print(int(val[3*i  + 4]));
+          Serial.print(int(val[3 * i  + 4]));
           Serial.println();
         }
-        strip.setPixelColor(i + 6, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
+
+        uint32_t currentC = strip.getPixelColor(i + 6);
+        int red = getRedFromColor(currentC);
+        int green = getRedFromColor(currentC);
+        int blue = getRedFromColor(currentC);
+        //strip.setPixelColor(i + 6, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
+        //  strip.setPixelColor(i + 6, int((val[3*i + 2] + red) / 2), int((val[3*i + 3] + green) / 2), int((val[3*i + 4] + blue) / 2));
+        strip.setPixelColor(i + 6, int((1 - ratio) * float(val[3 * i + 2]) + ratio * float(red)),
+                            int((1 - ratio) * float(val[3 * i + 3]) + ratio * float(green)),
+                            int((1 - ratio) * float(val[3 * i + 4]) + ratio * float(blue)));
+
       }
     }
   }
 
-    strip.show();
+  strip.show();
 }
