@@ -1,3 +1,7 @@
+/*
+  Mapping from pitch and midi to color
+*/
+
 int [] midiAflat = {32, 44, 56, 68, 92, 104, 116};
 int [] midiANatural = { 21, 33, 45, 57, 69, 81, 93, 105, 117};
 
@@ -61,7 +65,6 @@ color mapPitch(float pitch) {
       }
     }
   }
-
 
   return pitchColor;
 }

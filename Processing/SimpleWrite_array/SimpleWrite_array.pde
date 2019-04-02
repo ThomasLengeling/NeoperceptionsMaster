@@ -28,36 +28,6 @@ void setup()
 
   myPort = new Serial(this, portName, 115200);
 }
-/*
-byte[] generate_msg(int[] v) {
- byte[] result = new byte[7];
- result[0] = byte('<');
- for (int i = 0; i < 6; i ++) {
- result[i+1] = byte(v[i] & mask);
- }
- return result;
- }
- */
-
-byte[] generate_msg_1(int[] v) {
-  byte[] result = new byte[20];
-  result[0] = byte('<');
-  result[1] = byte(v[0] & mask);
-  for (int i = 0; i < 18; i ++) {
-    result[i+2] = byte(v[i + 1] & mask);
-  }
-  return result;
-}
-
-byte[] generate_msg_2 (int[] v) {
-  byte[] result = new byte[20];
-  result[0] = byte('>');
-  result[1] = byte(v[0] & mask);
-  for (int i = 0; i < 18; i ++) {
-    result[i + 2] = byte(v[i + 1 + 18] & mask);
-  }
-  return result;
-}
 
 void draw() {
 
@@ -145,6 +115,26 @@ void setMsg(int index, int r, int g, int b, int garmentId) {
   LEDArray[index * 3 + 3] = b;
 }
 
+byte[] generate_msg_1(int[] v) {
+  byte[] result = new byte[20];
+  result[0] = byte('<');
+  result[1] = byte(v[0] & mask);
+  for (int i = 0; i < 18; i ++) {
+    result[i+2] = byte(v[i + 1] & mask);
+  }
+  return result;
+}
+
+byte[] generate_msg_2 (int[] v) {
+  byte[] result = new byte[20];
+  result[0] = byte('>');
+  result[1] = byte(v[0] & mask);
+  for (int i = 0; i < 18; i ++) {
+    result[i + 2] = byte(v[i + 1 + 18] & mask);
+  }
+  return result;
+}
+
 void sendMsg() {
   byte[] msg = generate_msg_1(LEDArray); 
   myPort.write(msg);
@@ -153,15 +143,6 @@ void sendMsg() {
   myPort.write(msg2);
   println(msg);
   println(msg2);
-
-  byte[] result = new byte[40];
-  for (int i =0; i < 20; i++) {
-    result[i] = msg[i];
-  }
-  for (int i =0; i < 20; i++) {
-    result[i+20] = msg2[i];
-  }
-  myPort.write(result);
 }
 
 boolean mouseOverRect() { // Test if mouse is over square
