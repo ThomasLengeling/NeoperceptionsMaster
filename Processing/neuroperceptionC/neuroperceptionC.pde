@@ -62,9 +62,8 @@ void draw() {
     }
   }
 
+  //sendMsg(gPort);
   controlActivations();
-
-  sendMsg(gPort);
 }
 
 void controlActivations() {
@@ -83,6 +82,16 @@ void controlActivations() {
     i++;
   }
 
+  i =0;
+  for (Garment gm : manager.garments) {
+    float amp = cp5.getController("amp_"+tags[i]).getValue();
+    gm.ampSensity = amp;
+    i++;
+  }
+
+  //sensitivity amps
+
+
 
 
   // sendMsgAll(gPort, maxLEDs, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), garmentIndex);
@@ -90,10 +99,57 @@ void controlActivations() {
 
 void keyPressed() {
   if (key == '3') {
-    turnOff(12, 0);
+    turnOffAll();
+    sendMsg(gPort);
+    delay(2);
   }
 
   if (key == '4') {
-    turnOn(0, 255, 0, 12, 0);
+    turnOnAll((int)random(255), (int)random(255), (int)random(255), 200);
+    sendMsg(gPort);
+    delay(2);
+  }
+
+
+  if (key == '5') {
+    for (int i = 0; i < 5; i++) {
+      hylighters.sendNoteHylight(i, off);
+    }
+  }
+
+  if (key == '6') {
+    for (int i = 0; i < 5; i++) {
+      hylighters.sendNoteHylight(i, cmdHylighter.get(0));
+    }
+  }
+
+  if (key == '7') {
+    for (int i = 0; i < 5; i++) {
+      hylighters.sendNoteHylight(i, cmdHylighter.get(1));
+    }
+  }
+
+  if (key == '8') {
+    for (int i = 0; i < 5; i++) {
+      hylighters.sendNoteHylight(i, cmdHylighter.get(2));
+    }
+  }
+
+  if (key == '9') {
+    for (int i = 0; i < 5; i++) {
+      hylighters.sendNoteHylight(i, cmdHylighter.get(3));
+    }
+  }
+
+  if (key == '0') {
+    for (int i = 0; i < 5; i++) {
+      hylighters.sendNoteHylight(i, cmdHylighter.get(4));
+    }
+  }
+
+  if (key == '-') {
+    for (int i = 0; i < 5; i++) {
+      hylighters.sendNoteHylight(i, cmdHylighter.get(5));
+    }
   }
 }

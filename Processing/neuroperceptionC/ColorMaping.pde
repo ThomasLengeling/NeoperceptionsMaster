@@ -88,7 +88,7 @@ void setupMidiMap() {
 }
 
 color mapPitch(float pitch) {
-  color pitchColor = color(0, 0, 0, 255);
+  color pitchColor = color(10, 10, 10, 255);
   int midiPitch = floor(pitch);
   currIndexHylighter = -1;
   //// println(midiPitch);
@@ -108,6 +108,7 @@ color mapPitch(float pitch) {
       }
     }
   }
-
+  
+  pitchColor = color(pitchColor, 100);
   return pitchColor;
 }

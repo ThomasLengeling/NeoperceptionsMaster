@@ -22,42 +22,44 @@ void setupGarmentSerial(String str) {
   }
 }
 
+
 //turn off all leds
-void turnOff(Serial gPort, int maxLEDs, int gIndex) {
+void turnOff(int maxLEDs, int gIndex) {
   for (int i = 0; i < maxLEDs; i++) {
     setLEDValues(i, 0, 0, 0, gIndex);
   }
-  sendMsg(gPort);
+
 }
 
 //turn on with one color
-void turnOn(Serial gPort, int r, int g, int b, int maxLEDs, int gIndex) {
+void turnOn(int r, int g, int b, int maxLEDs, int gIndex) {
   for (int i = 0; i < maxLEDs; i++) {
     setLEDValues(i, r, g, b, gIndex);
   }
-  sendMsg(gPort);
 }
 
 //send a msg to all
-void sendMsgAll(Serial gPort, int maxLEDs, int r, int g, int b, int indexG) {
+void sendMsgAll(int maxLEDs, int r, int g, int b, int indexG) {
   for (int i = 0; i < maxLEDs; i++) {
     setLEDValues(i, r, g, b, indexG);
   }
-  sendMsg(gPort);
 }
 
 //send indiviual msg
-void sendSerialMsg(Serial gPort, int index, int r, int g, int b, int indexG) {
+void sendSerialMsg(int index, int r, int g, int b, int indexG) {
   setLEDValues(index, r, g, b, indexG);
-  sendMsg(gPort);
+  //sendMsg(gPort);
 }
 
 //set the LED values
 void setLEDValues(int index, int r, int g, int b, int garmentId) {  
   LEDArray[0] = garmentId;
-  LEDArray[index * 3 + 1] = r;
-  LEDArray[index * 3 + 2] = g;
-  LEDArray[index * 3 + 3] = b;
+  //color currentC = color(LEDArray[index * 3 + 1], LEDArray[index * 3 + 2], LEDArray[index * 3 + 3]);
+  //color newC = color(r, g, b);
+  //color interC = lerpColor(currentC, newC, .5);
+  LEDArray[index * 3 + 1] = r;//int(red(interC));
+  LEDArray[index * 3 + 2] = g;//int(green(interC));
+  LEDArray[index * 3 + 3] = b;//int(blue(interC));
 }
 
 /*

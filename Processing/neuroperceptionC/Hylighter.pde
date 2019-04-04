@@ -55,8 +55,8 @@ class Hylighter {
 
     byte arr[] = msg.getBytes();
 
-    port.write(arr);
-    println("send: "+index+" "+note);
+    //port.write(arr);
+   // println("send: "+index+" "+note);
   }
 
   //draw

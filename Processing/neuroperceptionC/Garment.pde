@@ -21,10 +21,17 @@ class Garment {
   float pitch;
   int onset;
   float amp;
+  float ampSensity =1.0;
+  float ampMap;
 
   color pitchColor = color(0, 150, 200);
 
   int id;
+
+  //local timer per garment
+  int timerLED;
+  int timerMax = int(60 * 0.5); //frame per second
+  boolean enableLED = false;
 
 
   Garment(int numLEDs, float posX, float posY) {
@@ -58,6 +65,11 @@ class Garment {
   int getMaxLEDs() {
     return mLEDs.size();
   }
+  
+  void updateAmp(float a){
+    amp =a;
+    ampMap = map(amp, -60, 90, 0, 255)*ampSensity;
+  }
 
 
   //draw garment
@@ -70,16 +82,15 @@ class Garment {
       //audio reactive visualization
       //led.tam = 20 + amp*25;
       led.colorLED = pitchColor;
-      
-      led.tam = 20 + map(amp, -60, 10, 0, 1)*25;
 
+      led.tam = 20 + amp;
+      // sendMsgAll(led.id, 0, 0, 0, id);
+      //sendSerialMsg(gPort, led.id, 0, 0, 0, id);
+    }
 
-      //update timer to turn of the LED
-      if (led.updateTimer()) {
-        led.resetTimer();
-       // sendMsgAll(led.id, 0, 0, 0, id);
-       //sendSerialMsg(gPort, led.id, 0, 0, 0, id);
-      }
+    //update timer to turn of the LED
+    if (updateTimer()) {
+      resetTimer();
     }
   }
 
@@ -90,10 +101,27 @@ class Garment {
     }
   }
 
+
+  //increment time
   void incTime() {
-    for (RGBLED led : mLEDs) {
-      led.incTime();
+    timerLED++;
+    enableLED = true;
+    println("inc garment "+id);
+  }
+
+  void resetTimer() {
+    enableLED = false;
+    timerLED = 0;
+    println("reset garment "+id);
+  }
+
+  boolean updateTimer() {
+    if (abs(millis() - timerLED) >= timerMax) {
+      if (enableLED) {
+        return true;
+      }
     }
+    return false;
   }
 }
 
@@ -108,11 +136,6 @@ class RGBLED {
   float posY;
 
   float tam;
-
-  //local timer per LED
-  int timerLED;
-  int timerMax = int(60 * 0.5); //frame per second
-  boolean enableLED = false;
 
   //unique id
   int id;
@@ -134,36 +157,11 @@ class RGBLED {
   void draw(boolean enable) {
     noStroke();
     if (enable) {
-      if (enableLED) {
-        fill(colorLED);
-      }else{
-        fill(colorLED, 150);
-      }
+      fill(colorLED);
     } else {
       tam = 20;
       fill(0, 50, 100);
     }
     ellipse(posX, posY, tam, tam);
-  }
-
-  //increment time
-  void incTime() {
-    timerLED++;
-    enableLED = true;
-  }
-
-  void resetTimer() {
-    enableLED = false;
-    timerLED = 0;
-   // println("reset LEDs "+id);
-  }
-
-  boolean updateTimer() {
-    if (abs(millis() - timerLED) >= timerMax) {
-      if (enableLED) {
-        return true;
-      }
-    }
-    return false;
   }
 }

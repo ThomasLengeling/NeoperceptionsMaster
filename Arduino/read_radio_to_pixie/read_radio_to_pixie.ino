@@ -22,7 +22,7 @@ Adafruit_Pixie strip = Adafruit_Pixie(NUMPIXELS, &pixieSerial);
 const int size_data = 20;
 byte raw[size_data];// = {0, 0, 0, 0, 0, 0, 0};
 byte val[size_data];// = {0, 0, 0, 0, 0, 0, 0};
-int ID = 0;
+int ID = 2;
 float ratio = 0.5;
 
 void setup() {
@@ -34,7 +34,9 @@ void setup() {
 
   radio.begin();
   radio.openReadingPipe(0, address);
-  radio.setPALevel(RF24_PA_MIN);
+  radio.setPALevel(RF24_PA_LOW);//RF24_PA_MIN);
+  radio.setDataRate(RF24_1MBPS);
+  radio.setPayloadSize(size_data);
   radio.startListening();
   strip.setBrightness(200);
 
@@ -148,8 +150,6 @@ void loop() {
         int red = getRedFromColor(currentC);
         int green = getRedFromColor(currentC);
         int blue = getRedFromColor(currentC);
-        //strip.setPixelColor(i + 6, int(val[3*i + 2]), int(val[3*i + 3]), int(val[3*i + 4]));
-        //  strip.setPixelColor(i + 6, int((val[3*i + 2] + red) / 2), int((val[3*i + 3] + green) / 2), int((val[3*i + 4] + blue) / 2));
         strip.setPixelColor(i + 6, int((1 - ratio) * float(val[3 * i + 2]) + ratio * float(red)),
                             int((1 - ratio) * float(val[3 * i + 3]) + ratio * float(green)),
                             int((1 - ratio) * float(val[3 * i + 4]) + ratio * float(blue)));

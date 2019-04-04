@@ -16,7 +16,7 @@ byte [] msgData;
 float timerLED = 0;
 float resetLEDTime = 1000;
 boolean restLED = false;
-color currentColor = color(0,0,0);
+color currentColor = color(0, 0, 0);
 int indexLED = 0;
 
 void UDPSetup() {
@@ -40,6 +40,8 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
   String message = new String( subset(data, 0, msgData.length) );
   String[] msgList = split(message, ' ');
 
+  println("mid: "+msgList[msgList.length - 1]);
+
   //get the values
   if (msgList.length >= 4 * 5) {
     //amp (DB float) (onset int), pitch (float), note string
@@ -52,7 +54,15 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
       int noteIndex    = i*4 + 3;
 
       //get the data
-      float amp = Float.valueOf(msgList[ampIndex]);
+
+      float amp =0;
+      try {
+        amp = Float.valueOf(msgList[ampIndex]);
+      }
+      catch(Exception e) {
+        
+      }
+      float ampSen = 1.5;
       int onset = int(Float.valueOf(msgList[onsetIndex]));
       float pitch = Float.valueOf(msgList[pitchIndex]);
       String note = msgList[noteIndex];
@@ -62,37 +72,42 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
       manager.garments.get(garmentIndex).onset = onset;
       manager.garments.get(garmentIndex).pitch = pitch;
       color pitchColor = mapPitch(pitch);
-      
-      
+
       currentColor = pitchColor;
       manager.garments.get(garmentIndex).pitchColor = pitchColor;
-
+    
+      //amp
+      manager.garments.get(garmentIndex).updateAmp(amp);
+      float ampMap =  manager.garments.get(garmentIndex).ampMap;
+      
       //String note
       // String statusM = "mary 0 amp: "+amp+" onset: "+onset+" pitch: "+pitch;
-      //println(statusM);
 
-      if (pitch != 0 ) {
-        int maxLEDs = 12;
-        println(note);
+      if (  manager.garments.get(garmentIndex).enable) {
+        //println(note);
         
-        setLEDValues(indexLED, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), garmentIndex);
-         hylighters.sendNoteHylight(0, cmdHylighter.get(currIndexHylighter));
+        println(ampMap);
+
+        // setLEDValues(maxLEDs, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), garmentIndex);
+        //turnOn(int(red(pitchColor)*mapAmp), int(green(pitchColor)*mapAmp), int(blue(pitchColor)*mapAmp), 12, garmentIndex);
+        turnOn(int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), int(ampMap), garmentIndex);
+        sendMsg(gPort);
+
+        //hylighters.sendNoteHylight(garmentIndex, cmdHylighter.get(currIndexHylighter));
         indexLED += 1;
         if (indexLED >= 12) {
           indexLED = 0;
         }
         //turnOn(int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), maxLEDs, garmentIndex);
-      }
+      } else {
+        //sendMsgAll(12, 0, 0, 0, garmentIndex);
+        //sendMsg(gPort);
 
-      if (pitch == 0) {
-         //sendMsgAll(12, 0, 0, 0, garmentIndex);
-         turnOff(12, garmentIndex);
-         manager.garments.get(garmentIndex).incTime();
+        manager.garments.get(garmentIndex).incTime();
       }
     }
-    
   }
 
   // print the result
-  println( "receive: \""+data+"\" from "+ip+" on port "+port+" "+message);
+ // println( "receive: \""+data+"\" from "+ip+" on port "+port+" "+message);
 }
