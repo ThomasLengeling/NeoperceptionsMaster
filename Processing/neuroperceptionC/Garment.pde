@@ -68,7 +68,7 @@ class Garment {
   
   void updateAmp(float a){
     amp =a;
-    ampMap = map(amp, -60, 90, 0, 255)*ampSensity;
+    ampMap = constrain(map(amp, -60, 90, 0, 255)*ampSensity, 0, 255);
   }
 
 
