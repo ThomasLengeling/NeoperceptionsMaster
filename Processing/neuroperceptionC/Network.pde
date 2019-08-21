@@ -89,7 +89,7 @@ void receive( byte[] data, String ip, int port ) {  // <-- extended handler
         println(ampMap);
 
         // setLEDValues(maxLEDs, int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), garmentIndex);
-        //turnOn(int(red(pitchColor)*mapAmp), int(green(pitchColor)*mapAmp), int(blue(pitchColor)*mapAmp), 12, garmentIndex);
+        //turnOn(int(red(pitchColor)*ampMap), int(green(pitchColor)*ampMap), int(blue(pitchColor)*ampMap), 12, garmentIndex);
         turnOn(int(red(pitchColor)), int(green(pitchColor)), int(blue(pitchColor)), int(ampMap), garmentIndex);
         sendMsg(gPort);
 

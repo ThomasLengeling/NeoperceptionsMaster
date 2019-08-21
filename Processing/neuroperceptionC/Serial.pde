@@ -79,7 +79,9 @@ void sendMsg(Serial gport) {
   byte[] msg = generate_msg_1(LEDArray); 
   try {
     gport.write(msg);
+
     println("sent msg to g");
+    //println(msg);
   }
   catch(Exception e) {
     println("sending port error");
